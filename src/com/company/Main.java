@@ -1,5 +1,6 @@
 package com.company;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
@@ -8,52 +9,51 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Product> producten = new ArrayList<>();
-        System.out.print("Geef productnaam (STOP om te stoppen): ");
-        String naam = scanner.nextLine();
-        while (! "STOP".equalsIgnoreCase(naam)){
-            double prijs;
-            do {
-                System.out.print("Geef prijs (niet negatief): ");
-                prijs = Double.parseDouble(scanner.nextLine());
-                if (prijs < 0) System.out.println("Kan niet negatief zijn. Opnieuw.");
-            }while(prijs < 0);
-            producten.add(new Product(naam, prijs));
-            System.out.print("Geef productnaam (STOP om te stoppen): ");
-            naam = scanner.nextLine();
-        }
-        Collections.sort(producten);
-        System.out.println("Producten gesorteerd op prijs: ");
-        for(Product p: producten){
-            System.out.printf("%-20s: € %.2f%n", p.getNaam(), p.getPrijs());
+            ArrayList<Persoon> personen = new ArrayList<>();
+            personen.add(new Persoon("Karen", LocalDate.of(1974, 10, 28)));
+            personen.add(new Persoon("Kristel", LocalDate.of(1975, 12, 10)));
+            personen.add(new Persoon("Kathleen", LocalDate.of(1978, 6, 18)));
+
+        Collections.sort(personen);
+        System.out.println("Output: ");
+        for (Persoon p : personen) {
+            System.out.printf("%s(%d)%n", p.getNaam(), p.getLeeftijd());
         }
     }
 }
 
-class Product implements Comparable<Product>{
+class Persoon implements Comparable<Persoon> {
     private String naam;
-    private double prijs;
+    private LocalDate geboortedatum;
 
-    public Product(String naam, double prijs) {
+    public Persoon(String naam, LocalDate geboortedatum) {
         this.naam = naam;
-        if (prijs < 0) throw new IllegalArgumentException("Prijs kan niet negatief zijn");
-        this.prijs = prijs;
+        this.geboortedatum = geboortedatum;
     }
 
     public String getNaam() {
         return naam;
     }
 
-    public double getPrijs() {
-        return prijs;
+    public LocalDate getGeboortedatum() {
+        return geboortedatum;
+    }
+
+    public int getLeeftijd() {
+        LocalDate vandaag = LocalDate.now();
+        int leeftijd = vandaag.getYear() - geboortedatum.getYear();
+        if (geboortedatum.getDayOfYear() > vandaag.getDayOfYear()) {
+            leeftijd--;
+        }
+        return leeftijd;
     }
 
     @Override
-    public int compareTo(Product o) {
-        if (this.prijs < o.prijs){
-            return +1;
-        } if (this.prijs > o.prijs)
+    public int compareTo(Persoon o) {
+        if (this.getLeeftijd() - o.getLeeftijd() < 0)
             return -1;
+        if (this.getLeeftijd() - o.getLeeftijd() > 0)
+            return +1;
         return 0;
     }
 }
