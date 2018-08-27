@@ -6,57 +6,73 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
         ArrayList<Persoon> personen = new ArrayList<>();
-        personen.add(new Persoon("Karen", LocalDate.of(1974, 10, 28)));
-        personen.add(new Persoon("Kristel", LocalDate.of(1975, 12, 10)));
-        personen.add(new Persoon("Kathleen", LocalDate.of(1978, 6, 18)));
-        personen.add(new Persoon("Hanne", LocalDate.of(1994, 3, 3)));
-        personen.add(new Persoon("Marthe", LocalDate.of(1996, 7, 16)));
-        personen.add(new Persoon("Klaasje", LocalDate.of(1995, 3, 2)));
-        FilterGegevens(personen);
-        for (Persoon p : personen) {
-            System.out.printf("%s (%d jaar)%n", p.getNaam(), p.getLeeftijd());
+        String naam;
+        Double lengte;
+        Double gewicht;
+
+        System.out.print("Geef naam (<RETURN> om te stoppen): ");
+        naam = scanner.nextLine();
+
+        while (!naam.equals("")) {
+
+            System.out.print("Geef lengte: ");
+            lengte = Double.parseDouble(scanner.nextLine());
+
+            System.out.print("Geef gewicht: ");
+            gewicht = Double.parseDouble(scanner.nextLine());
+
+            personen.add(new Persoon(naam, lengte, gewicht));
+
+            System.out.print("Geef naam (<RETURN> om te stoppen): ");
+            naam = scanner.nextLine();
         }
 
-    }
-
-    private static void FilterGegevens(ArrayList<Persoon> personen) {
-        for (int i = 0; i < personen.size(); i++) {
-            if (personen.get(i).getLeeftijd() < 30) {
-                personen.remove(personen.get(i));
-                i--;
-            }
+        Collections.sort(personen);
+        System.out.println("Personen gesorteerd op BMI: ");
+        for(Persoon p: personen){
+            System.out.printf("%s (lengte: %.2f, gewicht: %.2f) heeft een BMI van %.2f.%n", p.getNaam(), p.getLengte(), p.getGewicht(), p.getBMI());
         }
     }
-
 }
 
-class Persoon implements Comparable<Persoon> {
+class Persoon implements Comparable<Persoon>{
     private String naam;
-    private LocalDate geboorteDatum;
+    private double lengte;
+    private double gewicht;
 
-    public Persoon(String naam, LocalDate geboorteDatum) {
+    public Persoon(String naam, double lengte, double gewicht) {
         this.naam = naam;
-        this.geboorteDatum = geboorteDatum;
+        this.lengte = lengte;
+        this.gewicht = gewicht;
     }
 
     public String getNaam() {
         return naam;
     }
 
-    public LocalDate getGeboorteDatum() {
-        return geboorteDatum;
+    public double getLengte() {
+        return lengte;
     }
 
-    public int getLeeftijd() {
-        LocalDate vandaag = LocalDate.now();
-        int leeftijd = vandaag.getYear() - geboorteDatum.getYear();
-        if (geboorteDatum.getDayOfYear() > vandaag.getDayOfYear()) leeftijd--;
-        return leeftijd;
+    public double getGewicht() {
+        return gewicht;
     }
+
+    public double getBMI() {
+        double bmi = getGewicht()/ (getLengte() * getLengte());
+        return bmi;
+    }
+
 
     @Override
     public int compareTo(Persoon o) {
-        return this.getLeeftijd() - o.getLeeftijd();
+        if (this.getBMI() - o.getBMI() < 0) {
+            return +1;
+        }
+        if (this.getBMI() - o.getBMI() > 0) {
+            return -1;
+        } return 0;
     }
 }
