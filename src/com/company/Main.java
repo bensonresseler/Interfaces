@@ -8,41 +8,40 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         ArrayList<Persoon> personen = new ArrayList<>();
-        String naam;
-        Double lengte;
-        Double gewicht;
-
         System.out.print("Geef naam (<RETURN> om te stoppen): ");
-        naam = scanner.nextLine();
-
-        while (!naam.equals("")) {
-
+        String naam =scanner.nextLine();
+        while(! "".equals(naam)){
             System.out.print("Geef lengte: ");
-            lengte = Double.parseDouble(scanner.nextLine());
-
+            double lengte = Double.parseDouble(scanner.nextLine());
             System.out.print("Geef gewicht: ");
-            gewicht = Double.parseDouble(scanner.nextLine());
-
+            int gewicht = Integer.parseInt(scanner.nextLine());
             personen.add(new Persoon(naam, lengte, gewicht));
-
             System.out.print("Geef naam (<RETURN> om te stoppen): ");
-            naam = scanner.nextLine();
+            naam =scanner.nextLine();
+        }
+        filterOpBMI(personen);
+        System.out.println("Personen met goede BMI:");
+        for(Persoon p: personen){
+            System.out.printf("%s (lengte:%.2f, gewicht: %d) heeft een BMI van %.2f%n", p.getNaam(), p.getLengte(), p.getGewicht(), p.getBMI());
         }
 
-        Collections.sort(personen);
-        System.out.println("Personen gesorteerd op BMI: ");
-        for(Persoon p: personen){
-            System.out.printf("%s (lengte: %.2f, gewicht: %.2f) heeft een BMI van %.2f.%n", p.getNaam(), p.getLengte(), p.getGewicht(), p.getBMI());
+    }
+
+    private static void filterOpBMI(ArrayList<Persoon> personen) {
+        for (int i = 0; i < personen.size(); i++) {
+            if(personen.get(i).getBMI() < 18.5 || personen.get(i).getBMI() > 25){
+                personen.remove(personen.get(i));
+                i--;
+            }
         }
     }
 }
-
 class Persoon implements Comparable<Persoon>{
     private String naam;
     private double lengte;
-    private double gewicht;
+    private int gewicht;
 
-    public Persoon(String naam, double lengte, double gewicht) {
+    public Persoon(String naam, double lengte, int gewicht) {
         this.naam = naam;
         this.lengte = lengte;
         this.gewicht = gewicht;
@@ -56,23 +55,21 @@ class Persoon implements Comparable<Persoon>{
         return lengte;
     }
 
-    public double getGewicht() {
+    public int getGewicht() {
         return gewicht;
     }
-
-    public double getBMI() {
-        double bmi = getGewicht()/ (getLengte() * getLengte());
-        return bmi;
+    public double getBMI(){
+        return gewicht / (lengte *lengte);
     }
-
 
     @Override
     public int compareTo(Persoon o) {
-        if (this.getBMI() - o.getBMI() < 0) {
+        if (this.getBMI() < o.getBMI()){
             return +1;
-        }
-        if (this.getBMI() - o.getBMI() > 0) {
+        }else if (this.getBMI() > o.getBMI()){
             return -1;
-        } return 0;
+        }else {
+            return 0;
+        }
     }
 }
