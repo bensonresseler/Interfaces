@@ -2,44 +2,58 @@ package com.company;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        ArrayList<Persoon> personen = new ArrayList<Persoon>();
-        personen.add(new Persoon("Karen", "Damen"));
-        personen.add(new Persoon("Kristel", "Aerts"));
-        personen.add(new Persoon("Kathleen", "Aerts"));
-
-        Collections.sort(personen);
-        for (Persoon p :personen){
-            System.out.printf("%s %s%n", p.getVoornaam(), p.getAchternaam());
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<Product> producten = new ArrayList<>();
+        System.out.print("Geef productnaam (STOP om te stoppen): ");
+        String naam = scanner.nextLine();
+        while (! "STOP".equalsIgnoreCase(naam)){
+            double prijs;
+            do {
+                System.out.print("Geef prijs (niet negatief): ");
+                prijs = Double.parseDouble(scanner.nextLine());
+                if (prijs < 0) System.out.println("Kan niet negatief zijn. Opnieuw.");
+            }while(prijs < 0);
+            producten.add(new Product(naam, prijs));
+            System.out.print("Geef productnaam (STOP om te stoppen): ");
+            naam = scanner.nextLine();
+        }
+        Collections.sort(producten);
+        System.out.println("Producten gesorteerd op prijs: ");
+        for(Product p: producten){
+            System.out.printf("%-20s: € %.2f%n", p.getNaam(), p.getPrijs());
         }
     }
 }
 
-class Persoon implements Comparable<Persoon>{
-    private String voornaam;
-    private String achternaam;
+class Product implements Comparable<Product>{
+    private String naam;
+    private double prijs;
 
-    public Persoon(String voornaam, String achternaam) {
-        this.voornaam = voornaam;
-        this.achternaam = achternaam;
+    public Product(String naam, double prijs) {
+        this.naam = naam;
+        if (prijs < 0) throw new IllegalArgumentException("Prijs kan niet negatief zijn");
+        this.prijs = prijs;
     }
 
-    public String getVoornaam() {
-        return voornaam;
+    public String getNaam() {
+        return naam;
     }
 
-    public String getAchternaam() {
-        return achternaam;
+    public double getPrijs() {
+        return prijs;
     }
 
     @Override
-    public int compareTo(Persoon o) {
-        int checkAchternaam = this.achternaam.compareTo(o.achternaam);
-        if (checkAchternaam == 0){
-            return this.voornaam.compareTo(o.voornaam);
-        } else return checkAchternaam;
+    public int compareTo(Product o) {
+        if (this.prijs < o.prijs){
+            return +1;
+        } if (this.prijs > o.prijs)
+            return -1;
+        return 0;
     }
 }
